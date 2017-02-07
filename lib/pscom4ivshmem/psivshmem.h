@@ -19,6 +19,8 @@
 #define IVSHMEM_FRAME_SIZE 4096
 #define DEVICE_NAME "ivshmem"
 #define DEVICE_VERSION "0.0.1"
+#define IVSHMEM_INITIALIZED 0x4a646d73
+#define IVSHMEM_DISABLED 0x3a46d653
 
 //some bitmanipulation stuff:
 #define WORD_SIZE (CHAR_BIT * sizeof(unsigned char))
@@ -41,6 +43,7 @@ typedef struct ivshmem_pci_dev_s {
 	char str_mem_size_hex[UIO_MAX_NAME_SIZE];
 	float  mem_size_mib;
         char uuid_str[UUID_STRG_LENGTH];
+	unsigned long status;
 	unsigned long long mem_size_byte;
 	unsigned long long num_of_frames;
 	unsigned long long frame_size;

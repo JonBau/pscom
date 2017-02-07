@@ -86,7 +86,7 @@ int psivshmem_init_uio_device(ivshmem_pci_dev_t *dev) // init the device
    	sprintf(file_path, "/sys/class/uio/%s/maps/map1/size", namelist[n]->d_name);
     	psreadline_from_file(file_path, dev->str_mem_size_hex);
    	dev->mem_size_byte = strtol(dev->str_mem_size_hex, NULL, 0);
-	DPRINT(3, "Mapped Memory Size: %llu",dev->mem_size_byte);
+	DPRINT(3, "ivshmem: Mapped Memory Size: %llu",dev->mem_size_byte);
 	dev->mem_size_mib = dev->mem_size_byte / (float)1024 / (float)1024; // Byte -> KiB -> MiB
 
     	sprintf(file_path, "/sys/class/uio/%s/version", namelist[n]->d_name);
@@ -100,21 +100,22 @@ int psivshmem_init_uio_device(ivshmem_pci_dev_t *dev) // init the device
 	
      	close(dev_fd); //keep dev_fd alive? --> no, mmap() saves required data internally, c.f.man pages
 	free(namelist);
+	dev->status = IVSHMEM_INITIALIZED;
 	return 0;
 
     }
 
-not_initialised:
-    DPRINT(1,"Unable to initialize metadata!\n");
-    return -1;
 no_device:
-    DPRINT(1,"No suitable pci dev found!\n");
+    DPRINT(1,"ivshmem: No suitable PCI device found!\n");
+    dev->status = IVSHMEM_DISABLED;
     return -1;
 device_error:
-    DPRINT(1,"Device errror!\n");
+    DPRINT(1,"ivshmem: Device errror!\n");
+    dev->status = IVSHMEM_DISABLED;
     return -1;
 version_mismatch:
-    DPRINT(1,"Version mismatch! Current device version: %s - expected version: %s\n",dev->version, DEVICE_VERSION);
+    DPRINT(1,"ivshmem: Version mismatch! Current device version: %s - expected version: %s\n",dev->version, DEVICE_VERSION);
+    dev->status = IVSHMEM_DISABLED;
     sleep(1);
     return -1;
 
@@ -250,7 +251,7 @@ void *psivshmem_alloc_mem(ivshmem_pci_dev_t *dev, size_t sizeByte)
     
     	index = test_alloc(dev ,frame_qnt);
 
-	DPRINT(5,"psivshmem_alloc_memory: index= %ld\n",index);
+	DPRINT(5,"ivshmem: psivshmem_alloc_memory: index= %ld\n",index);
 
 	if(index == -1) return ptr;  // error! not enough memory
 
@@ -258,7 +259,7 @@ void *psivshmem_alloc_mem(ivshmem_pci_dev_t *dev, size_t sizeByte)
     	for (n = index; n<index + frame_qnt; n++)
     	{
 		SET_BIT(dev->bitmap,n);  //ToDo: maybe possible: macro to set more bits "at once"
-		DPRINT(5,"psivshmem_alloc_memory:  <SET_BIT no %ld>\n",n);
+		DPRINT(5,"ivshmem: psivshmem_alloc_memory:  <SET_BIT no %ld>\n",n);
 	}
     
     pthread_spin_unlock(dev->spinlock);
