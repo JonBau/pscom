@@ -121,6 +121,17 @@ version_mismatch:
 
 }
 
+
+int psivshmem_close_device(ivshmem_pci_dev_t *dev)
+{
+	if (dev->status != IVSHMEM_INITIALIZED) return -1;
+
+	assert(munmap((void*)dev->ivshmem_base, dev->mem_size_byte) == 0);
+	memset(dev, 0, sizeof(ivshmem_pci_dev_t));  // init with zeros
+	DPRINT(1,"ivshmem: device closed");
+	return 0;	
+}
+
  
 void psivshmem_init_device_handle(ivshmem_pci_dev_t *dev){
 /*
@@ -269,14 +280,4 @@ void *psivshmem_alloc_mem(ivshmem_pci_dev_t *dev, size_t sizeByte)
     return ptr;
 }
 
-int psivshmem_unmap_device(ivshmem_pci_dev_t *dev)
-{
-
-/*
- * ToDO: implement functionallity to unmap the device memory from process user space!
- *
- */
-
-    return -1;
-}
 

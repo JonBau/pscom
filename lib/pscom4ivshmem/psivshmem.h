@@ -70,7 +70,7 @@ int free_frame(ivshmem_pci_dev_t*, char*);
 void *alloc_frame(ivshmem_pci_dev_t*);
 void *psivshmem_alloc_mem(ivshmem_pci_dev_t*, size_t);
 int psivshmem_free_mem(ivshmem_pci_dev_t*, char*, size_t);
-int unmap_device(ivshmem_pci_dev_t*);
+int psivshmem_close_device(ivshmem_pci_dev_t*);
 
 //externs:
 
