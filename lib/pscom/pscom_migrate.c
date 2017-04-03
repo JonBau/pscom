@@ -91,7 +91,13 @@ int pscom_suspend_plugins(void)
 
 			/* determine corresponding plugin */
 			arch = PSCOM_CON_TYPE2ARCH(con->pub.type);
+	
+	DPRINT(1, "\n#####Arch = %d\n\n",arch);
+		
+
 		 	plugin = pscom_plugin_by_archid(arch);
+
+	DPRINT(1, "\n#####Plugin = %p\n\n",plugin);
 
 			/* suspend all still pending on-demand connections, too */
 			if(con->pub.type == PSCOM_CON_TYPE_ONDEMAND) {

@@ -96,7 +96,7 @@ int psivshmem_init_uio_device(ivshmem_pci_dev_t *dev) // init the device
 	
 	if(*(dev->first_byte) != IVSHMEM_DEVICE_MAGIC) goto device_collision;	
 	
-     	close(dev_fd); //keep dev_fd alive? --> no, mmap() saves required data internally, c.f.man pages
+    // 	close(dev_fd); //keep dev_fd alive? --> no, mmap() saves required data internally, c.f.man pages
 	free(namelist);
 	dev->status = IVSHMEM_INITIALIZED;
 	return 0;
@@ -126,8 +126,14 @@ version_mismatch:
 
 int psivshmem_close_device(ivshmem_pci_dev_t *dev)
 {
-	if (dev->status != IVSHMEM_INITIALIZED) return -1;
+int ret_madvise; 
+int ret_msync;
 
+	if (dev->status != IVSHMEM_INITIALIZED) return -1;
+ 
+//	ret_msync = msync((void*)dev->ivshmem_base, dev->mem_size_byte, MS_SYNC);	
+	ret_madvise = posix_madvise((void*)dev->ivshmem_base, dev->mem_size_byte,POSIX_MADV_DONTNEED);	
+	DPRINT(1,"ret_madvise=%d - errno=%d - ret_msync=%d",ret_madvise,errno, ret_msync);
 	assert(munmap((void*)dev->ivshmem_base, dev->mem_size_byte) == 0);
 	memset(dev, 0, sizeof(ivshmem_pci_dev_t));  // init with zeros
 	DPRINT(1,"ivshmem: device closed");

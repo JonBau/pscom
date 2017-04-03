@@ -473,7 +473,28 @@ void pscom_ivshmem_send(ivshmem_conn_t *ivshmem, char *buf, int len)
 static
 void pscom_ivshmem_close(pscom_con_t *con)
 {
+
+	pscom_connection_t *connection = &con->pub;
+
 	if (con->arch.ivshmem.local_com) {
+		int i;
+		ivshmem_conn_t *ivshmem = &con->arch.ivshmem;
+
+		// ToDo: This must not be a blocking while loop!
+		while (ivshmem->ivshmem_pending) {
+			pscom_ivshmem_check_pending_io(ivshmem);
+		}
+
+		ivshmem_cleanup_ivshmem_conn(ivshmem);
+
+		assert(list_empty(&con->poll_next_send));
+		assert(list_empty(&con->poll_reader.next));
+
+		DPRINT(1, "INFO: >>> IVSHMEM CONNECTION CLOSED! %s <<<", pscom_con_info_str(&connection->remote_con_info));
+	}
+
+
+/*	if (con->arch.ivshmem.local_com) {
 		int i;
 		ivshmem_conn_t *ivshmem = &con->arch.ivshmem;
 
@@ -494,6 +515,7 @@ void pscom_ivshmem_close(pscom_con_t *con)
 		assert(list_empty(&con->poll_next_send));
 		assert(list_empty(&con->poll_reader.next));
 	}
+*/
 }
 
 
