@@ -86,7 +86,8 @@ typedef enum PSCOM_con_type {
 	PSCOM_CON_TYPE_MXM      = 0x10,
 	PSCOM_CON_TYPE_SUSPENDED= 0x11,
 	PSCOM_CON_TYPE_UCP      = 0x12,
-	PSCOM_CON_TYPE_IVSHMEM  = 0x13
+	PSCOM_CON_TYPE_GW	= 0x13,
+	PSCOM_CON_TYPE_IVSHMEM  = 0x14,
 } pscom_con_type_t;
 
 
@@ -604,6 +605,8 @@ void pscom_con_type_mask_del(pscom_socket_t *socket, pscom_con_type_t con_type);
 /* Communication path con_type on socket allowed? */
 int pscom_con_type_mask_is_set(pscom_socket_t *socket, pscom_con_type_t con_type);
 
+void *pscom_con_type_mask_backup(pscom_socket_t *socket);
+void pscom_con_type_mask_restore(pscom_socket_t *socket, void *con_type_mask_backup);
 
 /*
  * query

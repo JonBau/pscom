@@ -53,7 +53,11 @@
 
 /* Used in constructing the UUID for QLogic */
 #define ENV_PSM_UNIQ_ID "PSP_PSM_UNIQ_ID"
+#define ENV_PSM_DEVCHECK "PSP_PSM_DEVCHECK"
 #define ENV_PMI_ID "PMI_ID"
+
+/* MXM */
+#define ENV_MXM_DEVCHECK "PSP_MXM_DEVCHECK"
 
 /* Debugoutput on signal SIGQUIT (i386:3) (key: ^\) */
 #define ENV_SIGQUIT "PSP_SIGQUIT"
@@ -98,6 +102,7 @@
 #define ENV_OPENIB_EVENT_CNT "PSP_OPENIB_EVENT_CNT" /* bool: Be busy if outstanding_cq_entries is to high? default: 1(yes) */
 #define ENV_OPENIB_IGNORE_WRONG_OPCODES "PSP_OPENIB_IGNORE_WRONG_OPCODES" /* bool: ignore wrong cq opcodes */
 #define ENV_OPENIB_LID_OFFSET "PSP_OPENIB_LID_OFFSET" /* int: offset to base LID (adaptive routing) */
+#define ENV_OPENIB_MCACHE_SIZE "PSP_OPENIB_MCACHE_SIZE" /* uint: max #entries in the memory registration cache. 0:disable cache */
 
 
 /* OFED HCA and port */

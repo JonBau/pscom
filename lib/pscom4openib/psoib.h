@@ -39,13 +39,22 @@ typedef struct {
     struct ibv_mr *mr;
 } mem_info_t;
 
-#undef IB_USE_RNDV
+#ifndef IB_DONT_USE_ZERO_COPY
+#define PSOIB_USE_MREGION_CACHE 1
+#define PSOIB_MREGION_CACHE_MAX_SIZE_DEFAULT 8
+
+#define IB_USE_RNDV
+#endif
+
+
+/*
+ * ++ RMA rendezvous
+ */
+#ifdef IB_USE_RNDV
+
 #define IB_RNDV_RDMA_WRITE
 #define IB_RNDV_THRESHOLD 4096
-#define IB_RNDV_USE_MREG_CACHE
-#define IB_RNDV_MREG_CACHE_SIZE 256
-#define IB_RNDV_DISABLE_FREE_TO_OS
-#undef  IB_RNDV_USE_MALLOC_HOOKS
+
 /* Use IB_RNDV_USE_PADDING not together with IB_RNDV_RDMA_WRITE! */
 // #define IB_RNDV_USE_PADDING
 #define IB_RNDV_PADDING_SIZE 64
@@ -53,26 +62,14 @@ typedef struct {
 
 #define IB_MAX_RDMA_MSG_SIZE 2147483647 /* RDMA supports up to 2GiB */
 
-#if defined(IB_USE_RNDV) && defined(IB_DONT_USE_ZERO_COPY)
-#undef IB_USE_RNDV
-#endif
 
-#if defined(IB_RNDV_USE_MREG_CACHE)
-/* if we use a registration cache, we _have_ to disable free() returning memory to the OS: */
-#define IB_RNDV_DISABLE_FREE_TO_OS
-#endif
-
-/*
- * ++ RMA rendezvous
- */
-#ifdef IB_USE_RNDV
 /* registered memory region. (Opaque object for users of psoib_get_rma_mreg() and psoib_put_rma_mreg()) */
 typedef struct psoib_rma_req psoib_rma_req_t;
 
 typedef struct psoib_rma_mreg {
 	mem_info_t      mem_info;
 	size_t          size;
-#ifdef IB_RNDV_USE_MREG_CACHE
+#if PSOIB_USE_MREGION_CACHE
 	struct psoib_mregion_cache* mreg_cache;
 #endif
 } psoib_rma_mreg_t;
@@ -94,12 +91,13 @@ int psoib_acquire_rma_mreg(psoib_rma_mreg_t *mreg, void *buf, size_t size, psoib
 int psoib_release_rma_mreg(psoib_rma_mreg_t *mreg);
 int psoib_post_rma_get(psoib_rma_req_t *req);
 int psoib_post_rma_put(psoib_rma_req_t *req);
-#ifdef IB_RNDV_USE_MREG_CACHE
+
+#if PSOIB_USE_MREGION_CACHE
 void psoib_mregion_cache_cleanup(void);
 void psoib_mregion_cache_init(void);
-#endif
+#endif /* PSOIB_USE_MREGION_CACHE */
+#endif /* IB_USE_RNDV */
 
-#endif
 /*
  *  -- RMA rendezvous end
  */
@@ -153,7 +151,7 @@ extern int psoib_global_sendq; /* bool. Use one sendqueue for all connections? *
 extern int psoib_event_count; /* bool. Be busy if outstanding_cq_entries is to high? */
 extern int psoib_ignore_wrong_opcodes; /* bool: ignore wrong cq opcodes */
 extern int psoib_lid_offset; /* int: offset to base LID (adaptive routing) */
-
+extern unsigned psoib_mregion_cache_max_size; /* uint: max #entries in the memory registration cache. 0:disable cache */
 /*
  * Information
  */
