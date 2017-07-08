@@ -117,7 +117,7 @@ AM_CONDITIONAL([IVSHMEM_ENABLED],
 AC_ARG_ENABLE([shm_lxc],[AS_HELP_STRING([--disable-shm_lxc],
 	      [disable shared memory (SHM) plugin with container support])])
 AS_IF([test "x$enable_shm_lxc" != xno],
-     [AX_CHECK_LIBRARY([SHM_LXC], [pthreads.h], [pthreads],
+     [AX_CHECK_LIBRARY([SHM_LXC], [pthread.h], [pthread],
      [have_shm_lxc=yes], [have_shm_lxc=no])])
 AS_IF([test "x$have_shm_lxc" = xno -a "x$enable_shm_lxc" = xyes],
      [AC_MSG_ERROR([shm_lxc support requested but not found])])

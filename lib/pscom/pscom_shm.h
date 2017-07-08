@@ -77,4 +77,9 @@ typedef struct shm_sock_s {
 
 extern pscom_plugin_t pscom_plugin_shm;
 
+/* needed by shm_lxc */
+void pscom_shm_sock_init(pscom_sock_t *sock);
+void pscom_shm_handshake(pscom_con_t *con, int type, void *data, unsigned size);
+void shm_close(pscom_con_t *con);
+
 #endif /* _PSPORT_SHM_H_ */

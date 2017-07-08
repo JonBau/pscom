@@ -477,6 +477,7 @@ extern pscom_t pscom;
 #define PSCOM_ARCH_MXM		117
 #define PSCOM_ARCH_UCP		119
 #define PSCOM_ARCH_IVSHMEM	120
+#define PSCOM_ARCH_SHM_LXC	121
 
 
 #define PSCOM_TCP_PRIO		2
@@ -493,7 +494,7 @@ extern pscom_t pscom;
 #define PSCOM_MXM_PRIO		30
 #define PSCOM_UCP_PRIO		30
 #define PSCOM_IVSHMEM_PRIO	80
-
+#define PSCOM_SHM_LXC_PRIO	80
 
 #define PSCOM_MSGTYPE_USER	0
 #define PSCOM_MSGTYPE_RMA_WRITE	1

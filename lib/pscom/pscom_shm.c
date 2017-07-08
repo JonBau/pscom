@@ -540,7 +540,7 @@ void shm_cleanup_shm_conn(shm_conn_t *shm)
 }
 
 
-static
+//static
 void shm_close(pscom_con_t *con)
 {
 	pscom_connection_t *connection = &con->pub;
@@ -591,7 +591,7 @@ int shm_is_local(pscom_con_t *con)
 }
 
 /****************************************************************/
-static
+//static
 void pscom_shm_sock_init(pscom_sock_t *sock)
 {
 	if (psshm_info.size) {
@@ -630,7 +630,7 @@ int pscom_shm_con_init(pscom_con_t *con)
 
 #define PSCOM_INFO_SHM_SHMID PSCOM_INFO_ARCH_STEP1
 
-static
+//static
 void pscom_shm_handshake(pscom_con_t *con, int type, void *data, unsigned size)
 {
 	precon_t *pre = con->precon;
