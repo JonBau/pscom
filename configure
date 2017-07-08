@@ -661,6 +661,10 @@ UCP_LDFLAGS
 UCP_CPPFLAGS
 OFED_ENABLED_FALSE
 OFED_ENABLED_TRUE
+SHM_LXC_ENABLED_FALSE
+SHM_LXC_ENABLED_TRUE
+SHM_LXC_LDFLAGS
+SHM_LXC_CPPFLAGS
 IVSHMEM_ENABLED_FALSE
 IVSHMEM_ENABLED_TRUE
 IVSHMEM_LDFLAGS
@@ -823,6 +827,7 @@ enable_gm
 enable_mellanox
 enable_openib
 enable_ivshmem
+enable_shm_lxc
 enable_ofed
 enable_ucp
 enable_dapl
@@ -851,6 +856,8 @@ OPENIB_CPPFLAGS
 OPENIB_LDFLAGS
 IVSHMEM_CPPFLAGS
 IVSHMEM_LDFLAGS
+SHM_LXC_CPPFLAGS
+SHM_LXC_LDFLAGS
 UCP_CPPFLAGS
 UCP_LDFLAGS
 DAPL_CPPFLAGS
@@ -1500,6 +1507,8 @@ Optional Features:
   --disable-mellanox      disable Mellanox support
   --disable-openib        disable Infiniband OFED with RC support
   --disable-ivshmem       disable inter-VM shared memory support
+  --disable-shm_lxc       disable shared memory (SHM) plugin with container
+                          support
   --disable-ofed          disable Infiniband OFED with UD support
   --disable-ucp           disable Open UCX support for UCP
   --disable-dapl          disable DAPL support
@@ -1546,6 +1555,10 @@ Some influential environment variables:
               C preprocessor flags for IVSHMEM headers
   IVSHMEM_LDFLAGS
               linker flags for IVSHMEM libraries
+  SHM_LXC_CPPFLAGS
+              C preprocessor flags for SHM_LXC headers
+  SHM_LXC_LDFLAGS
+              linker flags for SHM_LXC libraries
   UCP_CPPFLAGS
               C preprocessor flags for UCP headers
   UCP_LDFLAGS linker flags for UCP libraries
@@ -12285,6 +12298,105 @@ else
   IVSHMEM_ENABLED_FALSE=
 fi
 
+
+# -- SHM_LXC --
+# Check whether --enable-shm_lxc was given.
+if test "${enable_shm_lxc+set}" = set; then :
+  enableval=$enable_shm_lxc;
+fi
+
+if test "x$enable_shm_lxc" != xno; then :
+
+
+
+
+  if ${ax_cv_have_SHM_LXC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  save_CPPFLAGS="$CPPFLAGS"
+     save_LDFLAGS="$LDFLAGS"
+     save_LIBS="$LIBS"
+
+     if test "x$SHM_LXC_CPPFLAGS" != "x"; then :
+  CPPFLAGS="$CPPFLAGS $SHM_LXC_CPPFLAGS"
+fi
+
+     if test "x$SHM_LXC_LDFLAGS" != "x"; then :
+  LDFLAGS="$LDFLAGS $SHM_LXC_LDFLAGS"
+fi
+
+     ac_fn_c_check_header_mongrel "$LINENO" "pthreads.h" "ac_cv_header_pthreads_h" "$ac_includes_default"
+if test "x$ac_cv_header_pthreads_h" = xyes; then :
+
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lpthreads" >&5
+$as_echo_n "checking for main in -lpthreads... " >&6; }
+if ${ac_cv_lib_pthreads_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpthreads  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_pthreads_main=yes
+else
+  ac_cv_lib_pthreads_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pthreads_main" >&5
+$as_echo "$ac_cv_lib_pthreads_main" >&6; }
+if test "x$ac_cv_lib_pthreads_main" = xyes; then :
+  ax_cv_have_SHM_LXC=yes
+else
+  ax_cv_have_SHM_LXC=no
+fi
+
+
+else
+  ax_cv_have_SHM_LXC=no
+fi
+
+
+
+     CPPFLAGS="$save_CPPFLAGS"
+     LDFLAGS="$save_LDFLAGS"
+     LIBS="$save_LIBS"
+
+fi
+
+
+  if test "$ax_cv_have_SHM_LXC" = "yes"; then :
+  have_shm_lxc=yes
+else
+  have_shm_lxc=no
+fi
+
+fi
+if test "x$have_shm_lxc" = xno -a "x$enable_shm_lxc" = xyes; then :
+  as_fn_error $? "shm_lxc support requested but not found" "$LINENO" 5
+fi
+ if test "x$enable_shm_lxc" != xno -a "x$have_shm_lxc" = xyes; then
+  SHM_LXC_ENABLED_TRUE=
+  SHM_LXC_ENABLED_FALSE='#'
+else
+  SHM_LXC_ENABLED_TRUE='#'
+  SHM_LXC_ENABLED_FALSE=
+fi
+
+
 # -- OFED --
 
 # Check whether --enable-ofed was given.
@@ -12920,6 +13032,8 @@ ac_config_files="$ac_config_files lib/pscom4openib/Makefile"
 
 ac_config_files="$ac_config_files lib/pscom4ivshmem/Makefile"
   #Added for ivshmem plugin
+ac_config_files="$ac_config_files lib/pscom4shm_lxc/Makefile"
+
 ac_config_files="$ac_config_files lib/pscom4psm/Makefile"
 
 ac_config_files="$ac_config_files lib/psmalloc/Makefile"
@@ -13127,6 +13241,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${IVSHMEM_ENABLED_TRUE}" && test -z "${IVSHMEM_ENABLED_FALSE}"; then
   as_fn_error $? "conditional \"IVSHMEM_ENABLED\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${SHM_LXC_ENABLED_TRUE}" && test -z "${SHM_LXC_ENABLED_FALSE}"; then
+  as_fn_error $? "conditional \"SHM_LXC_ENABLED\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${OFED_ENABLED_TRUE}" && test -z "${OFED_ENABLED_FALSE}"; then
@@ -14028,6 +14146,7 @@ do
     "lib/pscom4ucp/Makefile") CONFIG_FILES="$CONFIG_FILES lib/pscom4ucp/Makefile" ;;
     "lib/pscom4openib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/pscom4openib/Makefile" ;;
     "lib/pscom4ivshmem/Makefile") CONFIG_FILES="$CONFIG_FILES lib/pscom4ivshmem/Makefile" ;;
+    "lib/pscom4shm_lxc/Makefile") CONFIG_FILES="$CONFIG_FILES lib/pscom4shm_lxc/Makefile" ;;
     "lib/pscom4psm/Makefile") CONFIG_FILES="$CONFIG_FILES lib/pscom4psm/Makefile" ;;
     "lib/psmalloc/Makefile") CONFIG_FILES="$CONFIG_FILES lib/psmalloc/Makefile" ;;
     "lib/psport4/Makefile") CONFIG_FILES="$CONFIG_FILES lib/psport4/Makefile" ;;
@@ -15299,6 +15418,13 @@ $as_echo "$as_me: IVSHMEM_ENABLED:  yes" >&6;}
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: IVSHMEM_ENABLED:  no" >&5
 $as_echo "$as_me: IVSHMEM_ENABLED:  no" >&6;}
+fi
+if test -z "$SHM_LXC_ENABLED_TRUE"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: SHM_LXC_ENABLED:   yes" >&5
+$as_echo "$as_me: SHM_LXC_ENABLED:   yes" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: SHM_LXC_ENABLED:   no" >&5
+$as_echo "$as_me: SHM_LXC_ENABLED:   no" >&6;}
 fi
 if test -z "$OFED_ENABLED_TRUE"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: OFED_ENABLED:     yes" >&5

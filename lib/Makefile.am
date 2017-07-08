@@ -60,8 +60,13 @@ if OPENIB_ENABLED
 endif
 
 # -- ivshmem --
-if IVSHMEM_ENABLED   
+if IVSHMEM_ENABLED
     SUBDIRS += pscom4ivshmem
+endif
+
+# -- shm_lxc --
+if IVSHMEM_ENABLED
+    SUBDIRS += pscom4shm_lxc
 endif
 
 # -- psm --

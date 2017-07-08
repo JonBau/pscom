@@ -112,6 +112,18 @@ AS_IF([test "x$have_ivshmem" = xno -a "x$enable_ivshmem" = xyes],
       [AC_MSG_ERROR([ivshmem support requested but not found])])
 AM_CONDITIONAL([IVSHMEM_ENABLED],
 	       [test "x$enable_ivshmem" != xno -a "x$have_ivshmem" = xyes])
+
+# -- SHM_LXC --
+AC_ARG_ENABLE([shm_lxc],[AS_HELP_STRING([--disable-shm_lxc],
+	      [disable shared memory (SHM) plugin with container support])])
+AS_IF([test "x$enable_shm_lxc" != xno],
+     [AX_CHECK_LIBRARY([SHM_LXC], [pthreads.h], [pthreads],
+     [have_shm_lxc=yes], [have_shm_lxc=no])])
+AS_IF([test "x$have_shm_lxc" = xno -a "x$enable_shm_lxc" = xyes],
+     [AC_MSG_ERROR([shm_lxc support requested but not found])])
+AM_CONDITIONAL([SHM_LXC_ENABLED],
+	       [test "x$enable_shm_lxc" != xno -a "x$have_shm_lxc" = xyes])
+
 # -- OFED --
 
 AC_ARG_ENABLE([ofed],[AS_HELP_STRING([--disable-ofed],
@@ -217,6 +229,7 @@ AC_CONFIG_FILES(lib/pscom4ofed/Makefile)
 AC_CONFIG_FILES(lib/pscom4ucp/Makefile)
 AC_CONFIG_FILES(lib/pscom4openib/Makefile)
 AC_CONFIG_FILES(lib/pscom4ivshmem/Makefile)  #Added for ivshmem plugin
+AC_CONFIG_FILES(lib/pscom4shm_lxc/Makefile)
 AC_CONFIG_FILES(lib/pscom4psm/Makefile)
 AC_CONFIG_FILES(lib/psmalloc/Makefile)
 AC_CONFIG_FILES(lib/psport4/Makefile)
@@ -245,6 +258,9 @@ AM_COND_IF([OPENIB_ENABLED],
 AM_COND_IF([IVSHMEM_ENABLED],
   [AC_MSG_NOTICE([IVSHMEM_ENABLED:  yes])],
   [AC_MSG_NOTICE([IVSHMEM_ENABLED:  no])])
+AM_COND_IF([SHM_LXC_ENABLED],
+  [AC_MSG_NOTICE([SHM_LXC_ENABLED:   yes])],
+  [AC_MSG_NOTICE([SHM_LXC_ENABLED:   no])])
 AM_COND_IF([OFED_ENABLED],
   [AC_MSG_NOTICE([OFED_ENABLED:     yes])],
   [AC_MSG_NOTICE([OFED_ENABLED:     no])])
