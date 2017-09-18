@@ -20,7 +20,7 @@
 
 #include "../pscom/pscom_con.h"
 #include "../pscom/pscom_types.h"
-
+#include <uuid/uuid.h>
 
 /* configs */
 #define CONTAINER_TYPE_WHITELIST 				"lxc", "docker" /* comma separated strings */
@@ -60,10 +60,16 @@ typedef enum
 } nodeidlist_action;
 
 
-bool shm_lxc_init( void );
+void shm_lxc_init( void );
 bool shm_is_containerized( void );
-bool shm_is_on_same_ipc_ns( pscom_con_t *con );
-bool shm_nodeid_list( nodeidlist_action action, int nodeid );
+bool shm_is_on_same_ipc_ns( pscom_con_t* );
+bool shm_nodeid_list( nodeidlist_action , int );
+bool bContainerizationDetectionMethod1_proc_cgroup( void );
+bool bContainerizationDetectionMethod2_proc_1_shed( void );
+bool bContainerizationDetectionMethod3_dev_console( void );
+uuid_t* shm_lxc_get_local_uuid( void );
+static void create_uuid( int );
+static void init_uuid( void );
 
 
 #endif /* SUPPORT_CONTAINERS */

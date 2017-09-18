@@ -17,7 +17,7 @@ lib_LTLIBRARIES = libpscom4shm_lxc.la
 libpscom4shm_lxc_la_SOURCES = pscom_shm_lxc.c pscom_shm_lxc.h shm_lxc.c shm_lxc.h
 libpscom4shm_lxc_la_CPPFLAGS = $(AM_CPPFLAGS) $(SHM_LXC_CPPFLAGS)
 libpscom4shm_lxc_la_LDFLAGS = $(AM_LDFLAGS) $(SHM_LXC_LDFLAGS)
-libpscom4shm_lxc_la_LIBADD =  -lpthread $(top_builddir)/lib/pscom/libpscom.la
+libpscom4shm_lxc_la_LIBADD =  -lpthread -luuid $(top_builddir)/lib/pscom/libpscom.la
 
 install-exec-hook:
 	cd $(DESTDIR)$(libdir) && $(RM) $(lib_LTLIBRARIES)
